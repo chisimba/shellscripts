@@ -1,0 +1,98 @@
+#!/bin/bash
+#  This script creates a developer clone of a chisimba 
+#  subversion checkout. Do not use this on a production
+#  server. It is for setting up a developer machine only.
+#  Author: Derek Keats
+#  License: GPL 2
+
+# You must edit the configuration lines below if you
+# have your Chisimba in a different location
+
+#  Set the chisimba base directories for core, modules
+#   and skins (this assumes that all Chisimba 
+#   files follow standard naming protocol in that directory)
+#   IMPORTANT: Note that there is no trailing /
+CHISIMBA_SVN="/home/$USER/chisimba/framework"
+MODULES_SVN="/home/$USER/chisimba/modules"
+SKINS_SVN=="/home/$USER/chisimba/skins"
+CANVAS_SVN=="/home/$USER/chisimba/canvases"
+
+#  Set the webserver root location. This is usually /var/www
+# Comment out the line below and replace it with the correct path
+SERVER_ROOT="/var/www"
+
+# Set server domain for localhost
+SERVER_DOMAIN="localhost"
+
+#Check if there is a supplied $1 input
+if [ "$1" = "" ]; then
+   echo "You did not supply a directory name to create for cloning Chisimba into."
+   exit 0
+fi
+
+if [ "$2" = "" ]; then
+   echo "You did not supply a base path for cloning Chisimba into."
+   SERVER_ROOT="/var/www"
+   echo "Defaulting to " $SERVER_ROOT
+fi
+
+DIRECTORY_NAME=$1
+echo $DIRECTORY_NAME " was read as the directory"
+echo "Creating a Chisimba clone in "$SERVER_ROOT"/"$DIRECTORY_NAME
+
+#exit 0
+
+#Change to the server root directory
+cd $SERVER_ROOT
+echo "In $SERVER_ROOT, which contains"
+ls -l
+echo
+echo
+
+#Create the Chisimba instance directory
+sudo mkdir $1
+sudo chmod 777 $1 -R
+cd $1
+echo "Created $1 directory"
+
+# Create the symlinks to things that can be safely linked
+ln -s $CHISIMBA_SVN/app/index.php .
+ln -s $CHISIMBA_SVN/app/gateway.php .
+ln -s $CHISIMBA_SVN/app/classes/ .
+ln -s $CHISIMBA_SVN/app/core_modules/ .
+ln -s $CHISIMBA_SVN/app/cron/ .
+ln -s $CHISIMBA_SVN/app/installer/ .
+ln -s $CHISIMBA_SVN/app/lib/ .
+echo "Linked the core into $1, which now contains"
+ls -l
+echo
+
+#Create a directory for skins and link it in
+mkdir skins
+sudo chmod 777 skins -R
+cd skins
+ln -s $CHISIMBA_SVN/app/skins/* .
+echo "Created skins directory and linked core skins"
+ls -l
+cd ..
+
+#Create a directory for user_images and link it in
+mkdir user_images
+sudo chmod 777 user_images -R
+cd user_images/
+ln -s $CHISIMBA_SVN/app/user_images/* .
+echo "Created user images directory and linked default images"
+ls -l
+cd ..
+
+#Link modules in as packages
+ln -s $MODULES_SVN/ packages
+echo "Linked modules as packages."
+echo
+ls
+cd ../..
+
+#Make it all writeable and horribly insecure
+sudo chmod 777 -R $WORKING_DIR 
+echo "Chmodded it all to VERY INSECURE, but OK for a developer machine."
+echo "All done. Bye....."

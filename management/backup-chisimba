@@ -1,0 +1,135 @@
+#!/bin/bash
+
+# Created by Derek Keats <derek@deats.com>
+#    based on work by Mohammed Salih
+#    at http://www.howtoforge.com/ ~
+#       mysql-backup-table-by-table-backup-with-auto- ~
+#       rotation-for-easy-restoration-of-partial-full-database
+#
+# Copyleft 2010 AVOIR -  GPL
+#
+# This BASH creates a backup of a Chisimba install on Ubuntu 
+#    into your ~/chisimba/backups directory
+#
+#    Edit the lines below and change to suit your site 
+
+# ------------begin_editable_region----------------
+#
+# Database to back up
+DB_DATABASE="mentor"
+#
+# Database credentials
+DB_USER="root"
+# Database password (note that you need -p before the password with no spaces)
+DB_PASSWORD="-pdogcat"
+# The directory containing the backup folder
+BACKUP_BASE="/home/$USER/backups/"
+# The backup directory
+BACKUP_HOME="/home/$USER/backups/${DB_DATABASE}/"
+# The backup log file
+BACKUP_LOG="${BACKUP_HOME}${DB_DATABASE}-backup.log"
+# The filesystem backup
+CHISIMBA_ROOT="/var/www/${DB_DATABASE}/"
+# ------------end_editable_region------------------
+
+# Get the script location so we can cd back here
+SCRIPT_DIRECTORY=$(cd `dirname $0` && pwd)
+
+
+# First check if the backup directory exists, then zip it and remove it
+if [ -d "$BACKUP_HOME" ]; then
+    cd $BACKUP_BASE
+    tar -cjf ${DB_DATABASE}_$(date +%s).tar.bz2 $DB_DATABASE
+    rm -R $DB_DATABASE
+    cd $SCRIPT_DIRECTORY
+fi
+
+# Make the directory
+mkdir $BACKUP_HOME
+touch $BACKUP_LOG
+
+echo "1. Backing up the database from ${DB_DATABASE}" > $BACKUP_LOG
+echo " " >> $BACKUP_LOG
+echo "2. The following tables are in the database ${DB_DATABASE}" >> $BACKUP_LOG
+
+# Get list of tables
+TBL_LIST=$(echo "use ${DB_DATABASE}; show tables;"|mysql -u $DB_USER $DB_PASSWORD -N)
+echo $TBL_LIST >> $BACKUP_LOG
+echo " " >> $BACKUP_LOG
+
+
+# Flush logs prior to the backup.
+mysql -u $DB_USER $DB_PASSWORD -e "use ${DB_DATABASE}; FLUSH LOGS;"
+echo "3. Logs flushed " >> $BACKUP_LOG
+echo " " >> $BACKUP_LOG
+
+# Zero the index
+index=0
+
+# Get the tables and their types and store this info in an array.
+table_types=($(mysql -u $DB_USER $DB_PASSWORD -e "show table status from $DB_DATABASE" | awk '{ if ($2 == "MyISAM" || $2 == "InnoDB") print $1,$2}'))
+table_type_count=${#table_types[@]}
+echo "4. Tables in database: ${table_type_count} " >> $BACKUP_LOG
+echo " " >> $BACKUP_LOG
+
+# Loop through the tables and apply the mysqldump option according to the 
+# table type. The table specific SQL files will not contain any create 
+# info for the table schema. It will be available in SCHEMA file
+
+while [ "$index" -lt "$table_type_count" ]; do
+    START=$(date +%s)
+    TYPE=${table_types[$index + 1]}
+    table=${table_types[$index]}
+    echo -en "$(date) : backup $DB_DATABASE : $table : $TYPE " >> $BACKUP_LOG
+    if [ "$TYPE" = "MyISAM" ]; then
+        DUMP_OPT="-u $DB_USER $DB_PASSWORD $DB_DATABASE  --tables "
+    else
+        DUMP_OPT="-u $DB_USER $DB_PASSWORD $DB_DATABASE  --single-transaction --tables"
+    fi
+    mysqldump  $DUMP_OPT $table |gzip -c > $BACKUP_HOME/$table.sql.gz
+    index=$(($index + 2))
+    echo -e " - Total time : $(($(date +%s) - $START))\n" >> $BACKUP_LOG
+done
+
+
+echo "5. Tables backed up to  ${BACKUP_HOME}" >> $BACKUP_LOG
+echo " " >> $BACKUP_LOG
+
+#Write out the settings for the restore script
+echo "#!/bin/bash" > ${BACKUP_HOME}restore.sh
+echo "DB_USER=\"${DB_USER}\"" >> ${BACKUP_HOME}restore.sh
+echo "DB_PASSWORD=\"${DB_PASSWORD}\"" >> ${BACKUP_HOME}restore.sh
+echo "DB_DATABASE=\"${DB_DATABASE}\"" >> ${BACKUP_HOME}restore.sh
+echo "CHISIMBA_ROOT=\"${CHISIMBA_ROOT}\"" >> ${BACKUP_HOME}restore.sh
+echo " " >> ${BACKUP_HOME}restore.sh
+echo "mysql -u \$DB_USER \$DB_PASSWORD -e \"CREATE DATABASE IF NOT EXISTS \${DB_DATABASE}; USE \${DB_DATABASE};\"" >> ${BACKUP_HOME}restore.sh
+echo "for table in *.gz" >> ${BACKUP_HOME}restore.sh
+echo "    do gunzip -c \$table | mysql -u \$DB_USER \$DB_PASSWORD \$DB_DATABASE" >> ${BACKUP_HOME}restore.sh
+echo "done" >> ${BACKUP_HOME}restore.sh
+echo "sudo cp config.tar.bz2 \${CHISIMBA_ROOT}" >> ${BACKUP_HOME}restore.sh
+echo "sudo cp usrfiles.tar.bz2 \${CHISIMBA_ROOT}" >> ${BACKUP_HOME}restore.sh
+echo "sudo cp user_images.tar.bz2 \${CHISIMBA_ROOT}" >> ${BACKUP_HOME}restore.sh
+echo "sudo rm -R \${CHISIMBA_ROOT}config" >> ${BACKUP_HOME}restore.sh
+echo "sudo rm -R \${CHISIMBA_ROOT}usrfiles" >> ${BACKUP_HOME}restore.sh
+echo "sudo rm -R \${CHISIMBA_ROOT}user_images" >> ${BACKUP_HOME}restore.sh
+echo "cd \${CHISIMBA_ROOT}" >> ${BACKUP_HOME}restore.sh
+echo "sudo tar -xjf config.tar.bz2" >> ${BACKUP_HOME}restore.sh
+echo "sudo tar -xjf usrfiles.tar.bz2" >> ${BACKUP_HOME}restore.sh
+echo "sudo tar -xjf user_images.tar.bz2" >> ${BACKUP_HOME}restore.sh
+
+# Add info to the log
+echo "6. Restore script created as restore.sh" >> $BACKUP_LOG
+echo " " >> $BACKUP_LOG
+
+# Now back up the config, usrfiles, and user_images directories
+cd $CHISIMBA_ROOT
+tar -cjf $BACKUP_HOME/config.tar.bz2 config
+tar -cjf $BACKUP_HOME/usrfiles.tar.bz2 usrfiles
+tar -cjf $BACKUP_HOME/user_images.tar.bz2 user_images
+echo "7. Files backed up to config.tar.bz2, usrfiles.tar.bz2 and user_images.tar.bz2" >> $BACKUP_LOG
+
+echo " " >> $BACKUP_LOG
+echo " " >> $BACKUP_LOG
+echo " " >> $BACKUP_LOG
+echo "---------- Finished ------- at $(date)" >> $BACKUP_LOG
+cat < $BACKUP_LOG

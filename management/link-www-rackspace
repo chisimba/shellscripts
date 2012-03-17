@@ -1,0 +1,29 @@
+#!/bin/bash
+
+cd /var/www
+ln -s /var/chisimba/framework/app/index.php .
+ln -s /var/chisimba/framework/app/gateway.php .
+ln -s /var/chisimba/framework/app/classes/ .
+ln -s /var/chisimba/framework/app/core_modules/ .
+ln -s /var/chisimba/framework/app/cron/ .
+ln -s /var/chisimba/framework/app/installer/ .
+ln -s /var/chisimba/framework/app/lib/ .
+
+#Create a directory for skins and link it in
+mkdir skins
+cd skins
+ln -s /var/chisimba/framework/app/skins/* .
+cd ..
+
+#Create a directory for user_images and link it in
+mkdir user_images
+cd user_images/
+ln -s /var/chisimba/framework/app/user_images/* .
+cd ..
+
+#Link the modules into the packages directory which Chisimba expects
+ln -s /var/chisimba/modules/ packages
+
+cd ..
+chown www-data:www-data www -R
+sudo service apache2 reload

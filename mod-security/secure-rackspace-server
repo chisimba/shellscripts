@@ -1,0 +1,14 @@
+# http://www.upubuntu.com/2011/10/secure-your-apache-2x-web-server-with.html 
+
+# To install ModSecurity on Ubuntu
+apt-get install libapache2-modsecurity
+
+# Create directory for ModSecurity in the Apache2 folder
+mkdir /etc/apache2/modsecurity
+
+# Create the configuration file for ModSecurity
+vi /etc/apache2/conf.d/modsecurity.conf
+
+# copy the ModSecurity rules using these two commands
+cd /etc/apache2/modsecurity
+sudo cp -R /usr/share/modsecurity-crs/base_rules/* .
