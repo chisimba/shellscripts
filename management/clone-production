@@ -70,7 +70,7 @@ echo "Linked the core into $1"
 
 #Create a directory for skins and link it in
 mkdir skins
-chmod 777 skins -R
+chown www-data:www-data skins -R
 cd skins
 ln -s $FRAMEWORK_ROOT/app/skins/* .
 echo "Created skins directory and linked core skins"
