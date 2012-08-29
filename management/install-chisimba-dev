@@ -17,11 +17,11 @@ sudo pear channel-update pear.php.net
 sudo pear upgrade pear
 sudo pear upgrade-all
 sudo pear install --alldeps -f Config Log
-sudo pear install MDB2
+sudo pear install MDB2-2.5.0b2 
 sudo pear install MDB2_Driver_mysql
 sudo pear install MDB2_Driver_pgsql
 sudo pear install MDB2_Driver_mysqli
-sudo pear install  --alldeps -f MDB2_Schema
+sudo pear install  --alldeps -f MDB2_Schema 
 
 echo "PEAR installed and updated."
 

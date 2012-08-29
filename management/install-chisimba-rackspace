@@ -17,7 +17,7 @@ sudo pear upgrade pear
 sudo pear upgrade-all
 sudo pear install --alldeps -f Config Log
 sudo pear install MDB2
-sudo pear install MDB2_Driver_mysql
+sudo pear install MDB2_Driver_mysql_1.5.0b2_beta
 sudo pear install MDB2_Driver_pgsql
 sudo pear install MDB2_Driver_mysqli
 sudo pear install  --alldeps -f  MDB2_Schema
@@ -32,6 +32,8 @@ echo "Checking out chisimba from subversion"
 svn co https://cvs2.uwc.ac.za/chisimba/framework/trunk/ framework 
 svn co https://cvs2.uwc.ac.za/chisimba/modules/trunk/ modules
 svn co https://cvs2.uwc.ac.za/chisimba/canvases canvases
+svn co https://cvs2.uwc.ac.za/chisimba/shellscripts shellscripts
+
 
 echo "Sites directory created in /var/sites"
 mkdir /var/sites
