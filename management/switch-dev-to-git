@@ -1,0 +1,25 @@
+#!/bin/bash
+
+# Created byDerek Keats <derek@deats.com>
+#
+# Copyleft 2010 AVOIR & Kenga -  GPL
+#
+# This BASH script switches a developer copy of Chisimba on Ubuntu 
+#     from Subversion to Git. It assumes a standard developer setup
+#     with Chisimba in /home/$USER/chisimba as per the install-chisimba-dev
+#     script.
+
+clear
+echo "Working .... "
+cd ~/chisimba/
+mv framework/ framework-old/
+echo "Checking out chisimba from GIT"
+git clone git@github.com:chisimba/chisimba.git framework
+#git clone git://github.com/chisimba/chisimba.git framework
+
+cd chisimba
+git config --global core.autocrlf input
+git rm --cached -r .
+git reset --hard
+git add .
+git commit -m "Normalize line endings"
