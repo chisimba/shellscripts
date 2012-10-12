@@ -18,9 +18,9 @@ sudo pear upgrade pear
 sudo pear upgrade-all
 sudo pear install --alldeps -f Config Log
 sudo pear install MDB2-2.5.0b2 
-sudo pear install MDB2_Driver_mysql
-sudo pear install MDB2_Driver_pgsql
-sudo pear install MDB2_Driver_mysqli
+sudo pear install  --alldeps -f  MDB2_Driver_mysql
+sudo pear install  --alldeps -f  MDB2_Driver_pgsql
+sudo pear install  --alldeps -f  MDB2_Driver_mysqli
 sudo pear install  --alldeps -f MDB2_Schema 
 
 echo "PEAR installed and updated."
@@ -35,12 +35,18 @@ cd ~
 mkdir chisimba
 cd chisimba
 
-echo "Checking out chisimba from subversion"
+echo "Checking out chisimba from git and subversion"
 
-svn co https://cvs2.uwc.ac.za/chisimba/framework/trunk/ framework
+git clone git://github.com/chisimba/chisimba.git framework
+# If you have commit rights on github Chisimba, and you have correctly
+# set up your SSH keys, comment out the above line, and uncomment the
+# line below.
+#git clone git@github.com:chisimba/chisimba.git framework
 svn co https://cvs2.uwc.ac.za/chisimba/modules/trunk/ modules
 svn co https://cvs2.uwc.ac.za/chisimba/canvases canvases
 
+# If you want any of the other components, uncomment the 
+# appropriate line below
 #svn co https://cvs2.uwc.ac.za/chisimba/skins/trunk/ skins
 #svn co https://cvs2.uwc.ac.za/chisimba_documentation/ docs
 #svn co https://cvs2.uwc.ac.za/chisimba/branding/ branding
