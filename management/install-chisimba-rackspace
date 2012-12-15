@@ -7,7 +7,7 @@
 
 clear
 echo "Working .... "
-sudo apt-get install subversion apache2 mysql-server mysql-client php5 php5-mysql php5-imap php5-gd php5-curl php-pear php5-imagick php5-imap php5-ldap php5-mapscript php5-mcrypt php5-memcache php5-mysql php5-pgsql php5-pspell php5-snmp php5-sqlite php5-tidy php5-uuid php5-xmlrpc php5-xsl
+sudo apt-get install subversion apache2 mysql-server mysql-client php5 php5-mysql php5-imap php5-gd php5-curl php-pear php5-imagick php5-imap php5-ldap php5-mapscript php5-mcrypt php5-memcache php5-mysql php5-pgsql php5-pspell php5-snmp php5-sqlite php5-tidy php5-uuid php5-xmlrpc php5-xsl git
 
 echo "Server backend software installed."
 echo "Installing and setting up PEAR..."
@@ -16,11 +16,12 @@ sudo pear channel-update pear.php.net
 sudo pear upgrade pear
 sudo pear upgrade-all
 sudo pear install --alldeps -f Config Log
-sudo pear install MDB2
-sudo pear install MDB2_Driver_mysql_1.5.0b2_beta
-sudo pear install MDB2_Driver_pgsql
-sudo pear install MDB2_Driver_mysqli
-sudo pear install  --alldeps -f  MDB2_Schema
+sudo pear install MDB2-2.5.0b2 
+sudo pear install  --alldeps -f  MDB2_Driver_mysql
+sudo pear install  --alldeps -f  MDB2_Driver_pgsql
+sudo pear install  --alldeps -f  MDB2_Driver_mysqli
+sudo pear install  --alldeps -f MDB2_Schema 
+
 
 echo "PEAR installed and updated."
 
@@ -28,8 +29,9 @@ cd /var
 mkdir chisimba
 cd chisimba
 
-echo "Checking out chisimba from subversion"
-svn co https://cvs2.uwc.ac.za/chisimba/framework/trunk/ framework 
+echo "Checking out chisimba from git and subversion"
+git clone git://github.com/chisimba/chisimba.git framework
+#svn co https://cvs2.uwc.ac.za/chisimba/framework/trunk/ framework 
 svn co https://cvs2.uwc.ac.za/chisimba/modules/trunk/ modules
 svn co https://cvs2.uwc.ac.za/chisimba/canvases canvases
 svn co https://cvs2.uwc.ac.za/chisimba/shellscripts shellscripts

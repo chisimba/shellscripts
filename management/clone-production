@@ -35,7 +35,7 @@ fi
 CHISIMBA_ROOT="/var/chisimba"
 FRAMEWORK_ROOT="/var/chisimba/framework"
 MODULES_ROOT="/var/chisimba/modules"
-SKINS_ROOT=="/var/chisimba/skins"
+SKINS_ROOT=="/var/chisimba/canvases"
 
 # Set the base location where your sites reside.
 # This is usually /var/ or /var/hostedsites/
