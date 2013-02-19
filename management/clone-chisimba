@@ -58,6 +58,7 @@ echo "Created $1 directory"
 # Create the symlinks to things that can be safely linked
 ln -s $CHISIMBA_SVN/app/index.php .
 ln -s $CHISIMBA_SVN/app/gateway.php .
+ln -s $CHISIMBA_SVN/app/xd_receiver.htm .
 ln -s $CHISIMBA_SVN/app/classes/ .
 ln -s $CHISIMBA_SVN/app/core_modules/ .
 ln -s $CHISIMBA_SVN/app/cron/ .

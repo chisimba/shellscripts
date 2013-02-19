@@ -61,11 +61,15 @@ echo "Created $1 directory and entered it"
 # Create the symlinks to things that can be safely linked
 ln -s $FRAMEWORK_ROOT/app/index.php .
 ln -s $FRAMEWORK_ROOT/app/gateway.php .
+ln -s $FRAMEWORK_ROOT/app/xd_receiver.htm .
 ln -s $FRAMEWORK_ROOT/app/classes/ .
 ln -s $FRAMEWORK_ROOT/app/core_modules/ .
-ln -s $FRAMEWORK_ROOT/app/cron/ .
 ln -s $FRAMEWORK_ROOT/app/installer/ .
 ln -s $FRAMEWORK_ROOT/app/lib/ .
+mkdir cron
+cd cron
+cp -s $FRAMEWORK_ROOT/app/cron/*.* .
+cd ..
 echo "Linked the core into $1"
 
 #Create a directory for skins and link it in
@@ -76,10 +80,10 @@ ln -s $FRAMEWORK_ROOT/app/skins/* .
 echo "Created skins directory and linked core skins"
 cd ..
 
-#Create a directory for user_images and link it in
+#Create a directory for user_images and copy default images into it.
 mkdir user_images
 cd user_images/
-ln -s $FRAMEWORK_ROOT/app/user_images/* .
+cp -s $FRAMEWORK_ROOT/app/user_images/*.* .
 echo "Created user images directory and linked default images"
 cd ..
 

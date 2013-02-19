@@ -3,6 +3,7 @@
 cd /var/www
 ln -s /var/chisimba/framework/app/index.php .
 ln -s /var/chisimba/framework/app/gateway.php .
+ln -s /var/chisimba/framework/app/xd_receiver.htm .
 ln -s /var/chisimba/framework/app/classes/ .
 ln -s /var/chisimba/framework/app/core_modules/ .
 ln -s /var/chisimba/framework/app/cron/ .
