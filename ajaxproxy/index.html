@@ -1,0 +1,21 @@
+<!--
+To change this template, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js" ></script>
+        <title></title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    </head>
+    <body>
+        <div id='content'>
+        </div>
+    </body>
+    <script>
+    $("#content").load("proxy.php", function(){
+        alert('LOADED');
+    });
+    </script>
+</html>
