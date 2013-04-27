@@ -1,7 +1,3 @@
-<!--
-To change this template, choose Tools | Templates
-and open the template in the editor.
--->
 <!DOCTYPE html>
 <html>
     <head>
@@ -14,8 +10,10 @@ and open the template in the editor.
         </div>
     </body>
     <script>
-    $("#content").load("proxy.php", function(){
-        alert('LOADED');
+    var url = 'proxy.php?module=simpleblog&action=ajaxById&id=gen20Srv39Nme23_43768_1361270111'
+    var url2 = 'proxy.php?module=simpleblog&action=ajaxByTag&tag=ipsum'
+    $("#content").load(url2, function(){
+        //alert('LOADED');
     });
     </script>
 </html>
