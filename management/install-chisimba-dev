@@ -89,7 +89,7 @@ cd ..
 #Create a directory for user_images and link it in
 mkdir user_images
 cd user_images/
-ln -s /home/$USER/chisimba/framework/app/user_images/* .
+cp /home/$USER/chisimba/framework/app/user_images/* .
 cd ..
 
 #Link the modules into the packages directory which Chisimba expects
