@@ -1,0 +1,39 @@
+#!/bin/bash
+
+# Created byDerek Keats <derek@deats.com>
+#
+# Copyleft 2010 AVOIR & Kenga -  GPL
+#
+# This BASH script configures the shortcuts for installing Gallery3 
+# as a Chisimba module. It works with the Gallery module in Chisimba.
+#
+# Assumes your Gallery3 code is in /var/sourcecode/gallery3
+
+GAL_DIR="/var/sourcecode/gallery3"
+TO_DIR="/var/sites/adorabel.co.za"
+cd $TO_DIR
+mkdir gal
+cd gal
+mkdir var
+chmod 777 var -R
+ln -s $GAL_DIR/index.php .
+ln -s $GAL_DIR/robots.txt .
+ln -s $GAL_DIR/application/ .
+ln -s $GAL_DIR/bin/ .
+ln -s $GAL_DIR/lib/ .
+ln -s $GAL_DIR/modules/ .
+ln -s $GAL_DIR/system/ .
+ln -s $GAL_DIR/themes/ .
+
+
+
+cp $GAL_DIR/index.php .
+cp $GAL_DIR/robots.txt .
+cp $GAL_DIR/application/ application -R
+cp $GAL_DIR/bin/ bin -R
+cp $GAL_DIR/lib/ lib -R
+cp $GAL_DIR/modules/ modules -R
+cp $GAL_DIR/system/ system  -R
+ln -s $GAL_DIR/themes/ .
+cp $GAL_DIR/installer/ installer -R
+echo "Open the site in your browser to finish the install."

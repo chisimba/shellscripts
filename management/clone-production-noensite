@@ -1,0 +1,106 @@
+#!/bin/bash
+#
+#  This script creates a production clone of a chisimba
+#  subversion checkout or release.  This is designed to 
+#  work for the type of installation we do through Kenga
+#  Solutions on Cloud Hosts runing Ubuntu Server
+#
+#  IMPORTANT: Place the file ENABLE-VHOST.txt in your
+#             Chisimba root directory
+#             (should be /var/chisimba)
+#
+#  Note that this script is mainly used for creating 
+#  hosted sites that have their own CNAME. However, you
+#  could use it for creating sites WITHIN your web root by
+#  changing SERVER_ROOT="/var/" to SERVER_ROOT="/var/www"
+#  and removing the VHOST setup stuff
+#
+#  Tested with:
+#     Ubuntu 11.10 Oneiric Ocelot
+#
+#  Author: Derek Keats
+#  License: GPL 2
+
+# Check for target
+if [ $# -ne 1 ] 
+then
+    echo "USAGE: clone-production target_directory"
+    exit 0
+fi
+
+#  Set the chisimba base directories for core, modules
+#   and skins (this assumes that all Chisimba
+#   files follow standard naming protocol in that directory)
+#   IMPORTANT: Note that there is no trailing /
+CHISIMBA_ROOT="/var/chisimba"
+FRAMEWORK_ROOT="/var/chisimba/framework"
+MODULES_ROOT="/var/chisimba/modules"
+SKINS_ROOT=="/var/chisimba/canvases"
+
+# Set the base location where your sites reside.
+# This is usually /var/ or /var/hostedsites/
+# or however you have configured it. Just using
+# /var/ is messy, but it is how I have it on
+# Kenga Solutions, but changed it to /var/sites/
+# for all new installations.
+SERVER_ROOT="/var/sites/"
+DOCUMENT_ROOT=$SERVER_ROOT$1
+
+echo "The directory and site is: $1"
+
+#Change to the server root directory
+cd $SERVER_ROOT
+echo "In $SERVER_ROOT"
+
+#Create the Chisimba instance directory
+mkdir $1
+chown www-data:www-data -R $1
+cd $1
+echo "Created $1 directory and entered it"
+
+# Create the symlinks to things that can be safely linked
+ln -s $FRAMEWORK_ROOT/app/index.php .
+ln -s $FRAMEWORK_ROOT/app/gateway.php .
+ln -s $FRAMEWORK_ROOT/app/xd_receiver.htm .
+ln -s $FRAMEWORK_ROOT/app/classes/ .
+ln -s $FRAMEWORK_ROOT/app/core_modules/ .
+ln -s $FRAMEWORK_ROOT/app/installer/ .
+ln -s $FRAMEWORK_ROOT/app/lib/ .
+mkdir cron
+cd cron
+cp -s $FRAMEWORK_ROOT/app/cron/*.* .
+cd ..
+echo "Linked the core into $1"
+
+#Create a directory for skins and link it in
+mkdir skins
+chown www-data:www-data skins -R
+cd skins
+ln -s $FRAMEWORK_ROOT/app/skins/* .
+echo "Created skins directory and linked core skins"
+cd ..
+
+#Create a directory for user_images and copy default images into it.
+mkdir user_images
+cd user_images/
+cp -s $FRAMEWORK_ROOT/app/user_images/*.* .
+echo "Created user images directory and linked default images"
+cd ..
+
+#Create a directory for modules and link it in
+ln -s $MODULES_ROOT packages
+echo "Created packages directory and linked to modules."
+cd ../
+
+#Make it all writeable 
+chown www-data:www-data -R $1
+#Make sure the chisimba directory is accessible to Apache
+chown www-data:www-data -R $CHISIMBA_ROOT
+echo "Chowned it all to Apache webserver: www-data"
+
+echo "All done."
+echo "You need to restart Apache for the changes to take effect."
+echo "On Ubuntu 11.04 this is /etc/init.d/apache2 restart"
+echo "and on Ubuntu 11.10 this is service apache2 reload"
+echo
+echo "Happy hacking as RMS would say."
