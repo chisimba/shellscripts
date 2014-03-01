@@ -79,6 +79,7 @@ cp /home/$USER/chisimba/framework/app/cron/* .
 cd ..
 ln -s /home/$USER/chisimba/framework/app/installer/ .
 ln -s /home/$USER/chisimba/framework/app/lib/ .
+ln -s /home/$USER/chisimba/framework/app/iconthemes/ .
 
 #Create a directory for skins and link it in
 mkdir skins
