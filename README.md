@@ -1,4 +1,4 @@
 shellscripts
 ============
 
-shellscripts for the Chisimba framework.
+Shellscripts for the Chisimba framework.
