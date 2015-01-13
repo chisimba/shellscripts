@@ -1,8 +1,7 @@
 #!/usr/bin/php
 <?php
-    $user = "dkeats";
-    $file = "/home/$user/chisimba/modules/species/sql/defaultdata.xml";
-    $workingDir = "/home/$user/tmp99";
+    $file = getenv('HOME')."/chisimba/modules/species/sql/defaultdata.xml";
+    $workingDir = getenv('HOME')."/tmp99";
     if (!file_exists($workingDir)) {
         mkdir($workingDir);
         echo "Made directory $workingDir\n";
