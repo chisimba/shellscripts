@@ -28,9 +28,10 @@ echo "PEAR installed and updated."
 
 sudo chown -R $USER:$USER /var/www
 rm /var/www/index.html
+rm /var/www/html/index.html
 
 echo "Changed ownership to www-data:www-data on /var/www"
-echo "Removed /var/www/index.html"
+echo "Removed apache default index.html"
 echo "Creating Chisimba development directory in your home directrory."
 cd ~
 mkdir chisimba
