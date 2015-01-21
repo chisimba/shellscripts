@@ -1,0 +1,82 @@
+#!/bin/bash
+
+# Created by Charl van Niekerk <charlvn@charlvn.com> & Derek Keats <derek@deats.com>
+#Edits: monwabisi <wsifumba@gmail.com>
+#
+# Copyleft 2010 AVOIR & Kenga -  GPL
+#
+# This BASH script prepares a developer copy of Chisimba on a fresh install of Ubuntu, assuming you have already cloned the framework from GITHUB (https://github.com/chisimba)
+
+cd
+echo "Working .... "
+sudo apt-get install apache2 mysql-server mysql-client php5 php5-json php5-mysql php5-imap php5-gd php5-curl php-pear php5-imagick php5-imap php5-ldap php5-mapscript php5-mcrypt php5-memcache php5-mysql php5-pgsql php5-pspell php5-snmp php5-sqlite php5-tidy php5-xmlrpc php5-xsl
+
+echo "Server backend software installed."
+echo "Installing and setting up PEAR..."
+
+sudo pear channel-update pear.php.net
+sudo pear upgrade pear
+sudo pear upgrade-all
+sudo pear install --alldeps -f Config Log
+sudo pear install MDB2
+sudo pear install MDB2_Driver_mysql
+sudo pear install MDB2_Driver_pgsql
+sudo pear install MDB2_Driver_mysqli
+sudo pear install --alldeps -f  MDB2_Schema
+
+echo "PEAR installed and updated."
+
+sudo chown -R $USER:$USER /var/www
+rm /var/www/html/index.html
+
+echo "Changed ownership to www-data:www-data on /var/www"
+echo "Removed apache default index.html"
+echo "Creating Chisimba development directory in your home directrory."
+cd ~
+cd chisimba
+
+echo "NOTE: Your first site will be in /var/www/html/ch"
+echo "      You can access this as http://localhost/ch after install is completed"
+echo "Doing permissions and symlinks..."
+
+chmod -R ga+rw framework/
+chmod -R ga+rw modules/
+chmod -R ga+rw canvases/
+
+cd /var/www/html/
+mkdir ch
+cd ch
+ln -s /home/$USER/chisimba/framework/app/index.php .
+ln -s /home/$USER/chisimba/framework/app/gateway.php .
+ln -s /home/$USER/chisimba/framework/app/classes/ .
+ln -s /home/$USER/chisimba/framework/app/core_modules/ .
+ln -s /home/$USER/chisimba/framework/app/cron/ .
+ln -s /home/$USER/chisimba/framework/app/installer/ .
+ln -s /home/$USER/chisimba/framework/app/lib/ .
+ln -s /home/$USER/chisimba/framework/app/iconthemes/ .
+
+#Create a directory for skins and link it in
+mkdir skins
+cd skins
+ln -s /home/$USER/chisimba/framework/app/skins/* .
+ln -s /home/$USER/chisimba/canvases/* .
+cd ..
+
+#Create a directory for user_images and link it in
+mkdir user_images
+cd user_images/
+ln -s /home/$USER/chisimba/framework/app/user_images/* .
+cd ..
+
+#Link the modules into the packages directory which Chisimba expects
+ln -s /home/$USER/chisimba/modules/ packages
+
+#Make it very insecure - only for a developer machine
+chmod 777 -R /var/www/html/ch
+#chmod -R ga+rw /var/www/ch
+
+#restart apache (uncomment the one that works for you and comment out the other)
+#sudo /etc/init.d/apache2 restart
+sudo service apache2 reload
+
+firefox http://127.0.0.1/ch/
