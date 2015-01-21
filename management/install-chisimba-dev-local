@@ -7,9 +7,9 @@
 #
 # This BASH script prepares a developer copy of Chisimba on a fresh install of Ubuntu 
 
-clear
+cd
 echo "Working .... "
-sudo apt-get install apache2 mysql-server mysql-client php5 php5-json php5-mysql php5-imap php5-gd php5-curl php-pear php5-imagick php5-imap php5-ldap php5-mapscript php5-mcrypt php5-memcache php5-mysql php5-pgsql php5-pspell php5-snmp php5-sqlite php5-tidy php5-uuid php5-xmlrpc php5-xsl
+sudo apt-get install apache2 mysql-server mysql-client php5 php5-json php5-mysql php5-imap php5-gd php5-curl php-pear php5-imagick php5-imap php5-ldap php5-mapscript php5-mcrypt php5-memcache php5-mysql php5-pgsql php5-pspell php5-snmp php5-sqlite php5-tidy php5-xmlrpc php5-xsl
 
 echo "Server backend software installed."
 echo "Installing and setting up PEAR..."
@@ -28,13 +28,12 @@ echo "PEAR installed and updated."
 
 sudo chown -R $USER:$USER /var/www
 rm /var/www/index.html
-rm /var/www/html/index.html
 
 echo "Changed ownership to www-data:www-data on /var/www"
 echo "Removed apache default index.html"
 echo "Creating Chisimba development directory in your home directrory."
 cd ~
-mkdir chisimba
+#mkdir chisimba
 cd chisimba
 
 echo "NOTE: Your first site will be in /var/www/ch"
@@ -45,7 +44,7 @@ chmod -R ga+rw framework/
 chmod -R ga+rw modules/
 chmod -R ga+rw canvases/
 
-cd /var/www
+cd /var/www/
 mkdir ch
 cd ch
 ln -s /home/$USER/chisimba/framework/app/index.php .
